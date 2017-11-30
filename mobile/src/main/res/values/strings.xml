@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Tardiness</string>
+    <string name="server_client_id">6330222808-b2mmj49b0m0660s2icu6u7arjjamuve7.apps.googleusercontent.com</string>
+    <string name="action_settings">Settings</string>
+</resources>

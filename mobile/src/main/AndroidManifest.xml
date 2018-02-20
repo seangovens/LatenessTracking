@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.kendra.tardiness">
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,20 +12,34 @@
             android:name=".ListActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-        <activity android:name=".EventFormActivity"></activity>
+        <activity android:name=".EventFormActivity">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
+
         <service android:name=".MessageReceiverService">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
-                <data android:scheme="wear" android:host="*"
-                    android:path="/logs" />
+
+                <data
+                    android:host="*"
+                    android:path="/logs"
+                    android:scheme="wear" />
             </intent-filter>
         </service>
+
+        <activity
+            android:name=".StudyDuration"
+            android:label="@string/title_activity_study_duration"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".GoogleAuthActivity" />
     </application>
+
+
 
 </manifest>

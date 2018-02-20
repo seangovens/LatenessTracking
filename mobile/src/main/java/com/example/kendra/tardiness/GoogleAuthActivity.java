@@ -2,10 +2,14 @@ package com.example.kendra.tardiness;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -14,9 +18,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Scope;
-
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class GoogleAuthActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
     final int RC_SIGN_IN = 1551;
@@ -71,6 +72,9 @@ public class GoogleAuthActivity extends AppCompatActivity implements View.OnClic
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             String authCode = acct.getServerAuthCode();
+            Intent intent = new Intent(this, StudyDuration.class);
+            intent.putExtra("auth", authCode);
+            this.startActivity(intent);
         } else {
             // Signed out, show unauthenticated UI.
         }

@@ -50,6 +50,12 @@ public class ListActivity extends AppCompatActivity {
             }
         });
         updateUI();
+
+        if (SavedAuthInfo.getUName(this).length() == 0) {
+            GoogleAuthActivity.mainContext = this;
+            Intent intent = new Intent(this, GoogleAuthActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void displayEventForm(int position) {

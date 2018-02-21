@@ -1,5 +1,5 @@
 package com.example.kendra.tardiness;
-
+/*
 import com.google.android.gms.wearable.MessageEvent;
 import com.google.android.gms.wearable.WearableListenerService;
 
@@ -7,7 +7,7 @@ import java.sql.Date;
 
 /**
  * Created by Kendra on 2017-11-25.
- */
+ *
 
 public class DataLayerListenerService extends WearableListenerService {
     @Override
@@ -18,4 +18,4 @@ public class DataLayerListenerService extends WearableListenerService {
             Helper.saveEvent(e, this);
         }
     }
-}
+}*/

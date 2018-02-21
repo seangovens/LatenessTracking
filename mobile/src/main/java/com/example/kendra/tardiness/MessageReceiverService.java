@@ -5,7 +5,7 @@ package com.example.kendra.tardiness;
  */
 
 
-        import android.content.Intent;
+        /*import android.content.Intent;
         import android.util.Log;
 
         import com.google.android.gms.wearable.DataEvent;
@@ -30,4 +30,4 @@ public class MessageReceiverService extends WearableListenerService {
         Helper.saveEvent(new Event("SLEEP"), this);
     }
 
-}
+}*/

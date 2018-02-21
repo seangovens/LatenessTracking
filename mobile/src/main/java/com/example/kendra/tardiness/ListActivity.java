@@ -17,7 +17,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
-import com.google.android.gms.nearby.messages.internal.Update;
+//import com.google.android.gms.nearby.messages.internal.Update;
 
 import java.io.Serializable;
 import java.util.*;
@@ -52,7 +52,7 @@ public class ListActivity extends AppCompatActivity {
         updateUI();
 
         if (SavedAuthInfo.getUName(this).length() == 0) {
-            GoogleAuthActivity.mainContext = this;
+            //GoogleAuthActivity.mainContext = this;
             Intent intent = new Intent(this, GoogleAuthActivity.class);
             startActivity(intent);
         }

@@ -15,6 +15,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
@@ -23,14 +24,8 @@ public class GoogleAuthActivity extends AppCompatActivity implements View.OnClic
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
-
     private GoogleSignInClient mGoogleSignInClient;
-    private TextView mStatusTextView;
 
-    //final int RC_SIGN_IN = 1551;
-
-
-    //public static Context mainContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,31 +34,22 @@ public class GoogleAuthActivity extends AppCompatActivity implements View.OnClic
 
         findViewById(R.id.sign_in_button).setOnClickListener(this);
 
-        //String serverClientId = getString(R.string.server_client_id);
+        String serverClientId = getString(R.string.server_client_id);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                //.requestScopes(new Scope("https://www.googleapis.com/auth/calendar"))
+                .requestScopes(new Scope("https://www.googleapis.com/auth/calendar"))
                 .requestEmail()
-                //.requestProfile()
-                //.requestServerAuthCode(serverClientId, true)
                 .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-
-        /*mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();*/
-
-
     }
 
     public void onStart() {
         super.onStart();
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
-        //GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        //updateUI(account);
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        updateUI(account);
     }
 
 
@@ -72,8 +58,6 @@ public class GoogleAuthActivity extends AppCompatActivity implements View.OnClic
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
-            //GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            //processSignInResult(result);
 
             // The Task returned from this call is always completed, no need to attach
             // a listener.
@@ -87,9 +71,9 @@ public class GoogleAuthActivity extends AppCompatActivity implements View.OnClic
             GoogleSignInAccount account = completeTask.getResult(ApiException.class);
             // Signed in successfully, show authenticated UI.
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            Intent intent = new Intent(this, EventFormActivity.class);
+            Intent intent = new Intent(this, ListActivity.class);
+            intent.putExtra("name", account.getDisplayName());
             this.startActivity(intent);
-            //updateUI(account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
@@ -130,28 +114,4 @@ public class GoogleAuthActivity extends AppCompatActivity implements View.OnClic
                 break;*/
         }
     }
-
-    /*private void processSignInResult(GoogleSignInResult result) {
-        Log.d("Test: ", "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
-            String authCode = acct.getServerAuthCode();
-            Intent intent = new Intent(this, ListActivity.class);
-            intent.putExtra("auth", authCode);
-            this.startActivity(intent);
-        } else {
-            // Signed out, show unauthenticated UI.
-        }
-    }
-
-
-    public void onClick(View v) {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
-
-    public void onConnectionFailed(ConnectionResult res) {
-
-    }*/
 }

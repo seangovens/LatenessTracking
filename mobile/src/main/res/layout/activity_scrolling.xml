@@ -23,7 +23,7 @@
              android:layout_width="match_parent"></android.support.v7.widget.Toolbar>
 
          <android.support.design.widget.TabLayout
-             android:id="@+id/Update"
+             android:id="@+id/tabs"
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
@@ -46,28 +46,21 @@
    </android.support.design.widget.AppBarLayout>
 
    <android.support.v4.widget.NestedScrollView
+       android:id="@+id/nestedScrollView"
        android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior">
+       android:layout_height="375dp"
+       app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"
+       tools:layout_editor_absoluteY="384dp">
 
-      <RelativeLayout
-          android:id="@+id/activity_main"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:paddingBottom="@dimen/activity_vertical_margin"
-          android:paddingLeft="@dimen/activity_horizontal_margin"
-          android:paddingRight="@dimen/activity_horizontal_margin"
-          android:paddingTop="@dimen/activity_vertical_margin"
-          tools:context="com.example.kendra.tardiness.ListActivity">
+
 
 
          <ListView
+             android:id="@+id/event_list"
              android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:id="@+id/event_list"></ListView>
+             android:layout_height="match_parent"></ListView>
 
 
-      </RelativeLayout>
    </android.support.v4.widget.NestedScrollView>
 
    <android.support.design.widget.FloatingActionButton
@@ -77,5 +70,7 @@
        android:layout_gravity="bottom|end"
        android:layout_margin="16dp"
        android:clickable="true"
-       android:src="@android:drawable/ic_input_add" />
+       android:src="@android:drawable/ic_popup_sync"
+       app:layout_anchor="@+id/nestedScrollView"
+       app:layout_anchorGravity="right|bottom" />
 </android.support.design.widget.CoordinatorLayout>

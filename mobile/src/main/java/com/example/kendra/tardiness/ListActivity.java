@@ -1,35 +1,25 @@
 package com.example.kendra.tardiness;
 
 
-import android.*;
 import android.accounts.AccountManager;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.SyncStateContract;
-import android.speech.RecognizerIntent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.ListMenuItemView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -50,32 +40,26 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Events;
 
 import java.io.IOException;
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static com.example.kendra.tardiness.R.id.text;
-
 public class ListActivity extends AppCompatActivity {
 
     ListView listView;
-    Button updateButton;
-
-
     GoogleAccountCredential mCredential;
     private TextView mOutputText;
     private FloatingActionButton mCallApiButton;
     ProgressDialog mProgress;
+    ListViewAdapter listViewAdapter;
+    ArrayList<Event> events;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
-    private static final String BUTTON_TEXT = "Call Google Calendar API";
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = { CalendarScopes.CALENDAR_READONLY };
 
@@ -83,36 +67,13 @@ public class ListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        //Temp fill list
-        ArrayList<Event> events = Helper.getAllEvents(this);
-        for( Event e: events){
-            Helper.removeEvent(e.id, this);
-        }
-        //readCalendarEvent(this);
-        listView = (ListView) findViewById(R.id.event_list);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id ) {
-                displayEventForm(position);
-            }
-        });
+        // Initialize credentials and service object.
+        mCredential = GoogleAccountCredential.usingOAuth2(
+                getApplicationContext(), Arrays.asList(SCOPES))
+                .setBackOff(new ExponentialBackOff());
 
 
-        updateUI();
-
-        Intent intent = getIntent();
-        String name = intent.getStringExtra("name");
-
-        if (SavedAuthInfo.getUName(this).length() == 0) {
-            //GoogleAuthActivity.mainContext = this;
-            //Intent intent = new Intent(this, GoogleAuthActivity.class);
-            //startActivity(intent);
-        }
-
-//========
         mCallApiButton = findViewById(R.id.update_button);
         mCallApiButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,51 +84,36 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
-        // Initialize credentials and service object.
-        mCredential = GoogleAccountCredential.usingOAuth2(
-                getApplicationContext(), Arrays.asList(SCOPES))
-                .setBackOff(new ExponentialBackOff());
+        //Temp fill list
+        events = Helper.getAllEvents(this);
+
+        //readCalendarEvent(this);
+        listView = (ListView) findViewById(R.id.event_list);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id ) {
+                displayEventForm(position);
+            }
+        });
+        listViewAdapter = new ListViewAdapter(this, 0, events);
+        listView.setAdapter(listViewAdapter);
+
+
+        updateUI();
     }
 
 
 
     public void displayEventForm(int position) {
         Intent intent = new Intent(this, EventFormActivity.class);
-        int itemNum = position/50;
-        intent.putExtra("itemNumber", itemNum);
+        int selected = (int) listView.getItemIdAtPosition(position);
+        intent.putExtra("itemNumber", selected );
         this.startActivity(intent);
-
-        //Trigger speech
-        /*Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "WHAT?!");
-        startActivityForResult(intent, 1001);*/
     }
 
-    /*@Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data ) {
-        if (requestCode == 1001 && resultCode == RESULT_OK) {
-            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            String message = results.get(0);
-            Helper.saveEvent(new Event(message), this);
-            updateUI();
-        } else {
-            String message = "bird";
-            Helper.saveEvent(new Event(message), this);
-            updateUI();
-        }
-    }*/
-
     public void updateUI(){
-        ArrayList<Event> events = Helper.getAllEvents(this);
-        /*for(Event e : events) {
-            View child = new EventItemView(this, e.title, "Temp");
-            listView.addView(child);
-        }*/
-
-        ListViewAdapter lva = new ListViewAdapter(this, 0, events);
-        listView.setAdapter(lva);
-
+        events = Helper.getAllEvents(this);
+        listViewAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -190,12 +136,6 @@ public class ListActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-    //==============================================
-
-
-
 
     /**
      * Attempt to call the API, after verifying that all the preconditions are
@@ -396,44 +336,37 @@ public class ListActivity extends AppCompatActivity {
         @Override
         protected List<String> doInBackground(Void... params) {
             try {
-                return getDataFromApi();
+
+                // List the next 10 events from the primary calendar.
+                DateTime now = new DateTime(System.currentTimeMillis());
+                List<String> eventStrings = new ArrayList<String>();
+                Events events = mService.events().list("primary")
+                        .setMaxResults(100)
+                        .setTimeMin(now)
+                        .setOrderBy("startTime")
+                        .setSingleEvents(true)
+                        .execute();
+                List<com.google.api.services.calendar.model.Event> items = events.getItems();
+
+                for (com.google.api.services.calendar.model.Event event : items) {
+                    DateTime start = event.getStart().getDateTime();
+                    if (start == null) {
+                        // All-day events don't have start times, so just use
+                        // the start date.
+                        start = event.getStart().getDate();
+                    }
+                    eventStrings.add(
+                            String.format("%s (%s)", event.getSummary(), start));
+                }
+                return eventStrings;
+
+
             } catch (Exception e) {
                 mLastError = e;
                 cancel(true);
                 return null;
             }
         }
-
-        /**
-         * Fetch a list of the next 10 events from the primary calendar.
-         * @return List of Strings describing returned events.
-         * @throws IOException
-         */
-        private List<String> getDataFromApi() throws IOException {
-            // List the next 10 events from the primary calendar.
-            DateTime now = new DateTime(System.currentTimeMillis());
-            List<String> eventStrings = new ArrayList<String>();
-            Events events = mService.events().list("primary")
-                    .setMaxResults(100)
-                    .setTimeMin(now)
-                    .setOrderBy("startTime")
-                    .setSingleEvents(true)
-                    .execute();
-            List<com.google.api.services.calendar.model.Event> items = events.getItems();
-
-            for (com.google.api.services.calendar.model.Event event : items) {
-                DateTime start = event.getStart().getDateTime();
-                if (start == null) {
-                    // All-day events don't have start times, so just use
-                    // the start date.
-                    start = event.getStart().getDate();
-                }
-                eventStrings.add(
-                        String.format("%s (%s)", event.getSummary(), start));
-            }
-            return eventStrings;
-        }
-
 
         @Override
         protected void onPreExecute() {

@@ -3,9 +3,14 @@ package com.example.kendra.tardiness;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.io.Serializable;
+import java.util.Locale;
 import java.util.Timer;
+
 
 /**
  * Created by Kendra on 2017-11-19.
@@ -13,6 +18,7 @@ import java.util.Timer;
 
 public class Event implements Parcelable{
     public String title;
+    public String name;
     public String classification;
     public String previousActivity;
     public int trasportMethod;
@@ -27,6 +33,10 @@ public class Event implements Parcelable{
     public Date startTime;
     public String id;
     public String tippingPoint;
+    public boolean complete;
+    DateFormat formatDate = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss.SSSSX", Locale.ENGLISH);
+    DateFormat dateToString = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
+    DateFormat timeToString = new SimpleDateFormat("hh:mm a");
 
     @Override
     public int describeContents() {
@@ -63,10 +73,29 @@ public class Event implements Parcelable{
     public Event(String data){
         id = Long.toString(System.currentTimeMillis());
         title = data;
+        complete = false;
     }
 
     public Event(String id, String data){
         this.id = id;
         title = data;
+        complete = false;
+        String[] input = title.split("\\(");
+        name = input[0].trim();
+
+        StringBuilder builder = new StringBuilder(input[1]);
+        builder.deleteCharAt(10); //Remove T
+        builder.deleteCharAt(builder.length() - 1);
+        builder.deleteCharAt(0); //Removing () around datetime
+        try {
+            date = formatDate.parse(builder.toString());
+            startTime = formatDate.parse(builder.toString());
+        } catch (Exception e) {
+
+        }
+    }
+
+    public String getCSVEntry() {
+        return String.format("%s, %s, %s, %s", title, date, startTime, switchTime);
     }
 }

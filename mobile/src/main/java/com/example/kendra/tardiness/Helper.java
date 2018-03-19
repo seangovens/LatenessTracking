@@ -6,44 +6,99 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
  * Created by Kendra on 2017-11-19.
- * Following tutorial https://www.youtube.com/watch?v=vPlMzs0C-nI
  */
 
 public class Helper {
-    public static String saveEvent(Event event, Context context) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
 
-        //event.id = String.valueOf(System.currentTimeMillis());
-        editor.putString(event.id, event.title);
-        editor.commit();
-        return event.id;
+    HashMap<String, Event> events;
+    public ArrayList<Event> toDo;
+    public ArrayList<Event> complete;
+    public ArrayList<Event> future;
+
+    public static enum EVENT_TYPES {
+        COMPLETE,
+        TODO,
+        FUTURE
     }
 
-    public static ArrayList<Event> getAllEvents(Context context) {
+    private static Helper helper;
+
+    private Helper(Context context) {
+        events = new HashMap<String, Event>();
+        toDo = new ArrayList<Event>();
+        complete = new ArrayList<Event>();
+        future = new ArrayList<Event>();
+
+
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        ArrayList<Event> events = new ArrayList<Event>();
         Map<String, ?> key = sharedPreferences.getAll();
         for (Map.Entry<String, ?> entry : key.entrySet()) {
             String savedData = (String) entry.getValue();
             if (savedData != null) {
                 Event event = new Event(entry.getKey(), savedData);
-                events.add(event);
-            } else {
-                events.add(new Event("Nope"));
+                events.put(event.title, event);
             }
         }
-        return events;
+        updateSubLists();
     }
 
-    public static void removeEvent(String id, Context context) {
+    public void updateSubLists() {
+        ArrayList<Event> myEvents = new ArrayList<>(events.values());
+        complete.clear();
+        toDo.clear();
+        future.clear();
+        for(Event e: myEvents) {
+        //if ( time is in the future)
+            if (e.complete) {
+                complete.add(e);
+            } else {
+                toDo.add(e);
+            }
+        }
+    }
+
+    public static Helper getInstance(Context c) {
+        if (helper == null) {
+            helper = new Helper(c);
+        }
+        return helper;
+    }
+
+    public  String addEvent(Event event) {
+        events.put(event.title, event);
+        return event.id;
+    }
+
+    public ArrayList<Event> getAllEvents(EVENT_TYPES t) {
+        updateSubLists();
+        if(t.equals( EVENT_TYPES.COMPLETE)) {
+            return complete;
+        } else if (t.equals( EVENT_TYPES.TODO)){
+            return toDo;
+        } else {
+            return future;
+        }
+    }
+
+    public void removeEvent(Event e) {
+        events.remove(e.id);
+    }
+
+    public void saveEvents(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.remove(id);
+        editor.clear();
+        ArrayList<Event> myEvents = new ArrayList<>(events.values());
+
+        for (Event e : myEvents) {
+            editor.putString(e.id, e.getCSVEntry());
+        }
         editor.commit();
     }
 }

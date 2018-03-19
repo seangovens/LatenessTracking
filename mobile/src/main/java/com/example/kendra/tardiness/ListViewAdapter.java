@@ -23,7 +23,7 @@ public class ListViewAdapter extends ArrayAdapter<Event> {
         convertView = LayoutInflater.from(this.getContext()).inflate(android.R.layout.simple_list_item_1, parent, false);
         Event event = getItem(position);
         TextView title = (TextView) convertView.findViewById(android.R.id.text1);
-        title.setText(event.title);
+        title.setText(event.name);
         return convertView;
     }
 }

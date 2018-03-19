@@ -13,15 +13,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TabHost;
 import android.widget.TextView;
+import android.support.design.widget.TabLayout;
 
 //import com.google.android.gms.nearby.messages.internal.Update;
 
@@ -53,7 +57,10 @@ public class ListActivity extends AppCompatActivity {
     private FloatingActionButton mCallApiButton;
     ProgressDialog mProgress;
     ListViewAdapter listViewAdapter;
-    ArrayList<Event> events;
+    ArrayList<Event> toDoEvents;
+    Helper helper;
+    TabLayout tabLayout;
+    Helper.EVENT_TYPES eventType;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
@@ -67,6 +74,7 @@ public class ListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
+        helper = Helper.getInstance(this);
 
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
@@ -84,8 +92,45 @@ public class ListActivity extends AppCompatActivity {
             }
         });
 
+        eventType = Helper.EVENT_TYPES.COMPLETE;
+
+        tabLayout = findViewById(R.id.tabs);
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                switch (tab.getPosition()) {
+                    case 0:
+                        eventType = Helper.EVENT_TYPES.COMPLETE;
+                        updateUI();
+                        break;
+                    case 1:
+                        eventType = Helper.EVENT_TYPES.TODO;
+                        updateUI();
+                        break;
+                    case 2:
+                        eventType = Helper.EVENT_TYPES.FUTURE;
+                        updateUI();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
         //Temp fill list
-        events = Helper.getAllEvents(this);
+        toDoEvents = new ArrayList<Event>();
+        toDoEvents.addAll( helper.getAllEvents(Helper.EVENT_TYPES.TODO));
 
         //readCalendarEvent(this);
         listView = (ListView) findViewById(R.id.event_list);
@@ -95,24 +140,29 @@ public class ListActivity extends AppCompatActivity {
                 displayEventForm(position);
             }
         });
-        listViewAdapter = new ListViewAdapter(this, 0, events);
+        listViewAdapter = new ListViewAdapter(this, 0, toDoEvents);
         listView.setAdapter(listViewAdapter);
-
-
         updateUI();
     }
-
-
 
     public void displayEventForm(int position) {
         Intent intent = new Intent(this, EventFormActivity.class);
         int selected = (int) listView.getItemIdAtPosition(position);
         intent.putExtra("itemNumber", selected );
+        intent.putExtra("eventType", eventType);
         this.startActivity(intent);
     }
 
     public void updateUI(){
-        events = Helper.getAllEvents(this);
+        listViewAdapter.clear();
+        toDoEvents.clear();
+        //listViewAdapter.addAll(helper.getAllEvents(eventType));
+        //toDoEvents.addAll(helper.getAllEvents(eventType));
+        ArrayList<Event> test = helper.getAllEvents(eventType);
+        //toDoEvents = helper.getAllEvents(eventType);
+        for(Event e : helper.getAllEvents(eventType)) {
+            toDoEvents.add(e);
+        }
         listViewAdapter.notifyDataSetChanged();
     }
 
@@ -363,6 +413,7 @@ public class ListActivity extends AppCompatActivity {
 
             } catch (Exception e) {
                 mLastError = e;
+                Log.w("ListActivity", "doInBackground" + e.getMessage());
                 cancel(true);
                 return null;
             }
@@ -380,7 +431,7 @@ public class ListActivity extends AppCompatActivity {
             } else {
 
                 for(String o : output) {
-                    Helper.saveEvent(new Event(o), ListActivity.this);
+                    helper.addEvent(new Event(o));
                 }
                 updateUI();
 
@@ -391,7 +442,7 @@ public class ListActivity extends AppCompatActivity {
 
         @Override
         protected void onCancelled() {
-            mProgress.hide();
+            //mProgress.hide();
             if (mLastError != null) {
                 if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
                     showGooglePlayServicesAvailabilityErrorDialog(

@@ -9,8 +9,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
@@ -459,6 +461,24 @@ public class ListActivity extends AppCompatActivity {
             } else {
                 //mOutputText.setText("Request cancelled.");
             }
+        }
+    }
+
+    private void emailData() {
+        try {
+            String filelocation= Environment.getExternalStorageDirectory() +"/Export_Tardiness.csv";
+            Intent intent = new Intent(Intent.ACTION_SENDTO);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "");
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.parse( "file://"+filelocation));
+            intent.putExtra(Intent.EXTRA_TEXT, "Data from today");
+            intent.setData(Uri.parse("mailto:"));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            this.startActivity(intent);
+            this.finish();
+        } catch(Exception e)  {
+            System.out.println("is exception raises during sending mail"+e);
         }
     }
 }

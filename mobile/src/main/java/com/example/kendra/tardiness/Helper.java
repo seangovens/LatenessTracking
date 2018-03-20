@@ -3,8 +3,16 @@ package com.example.kendra.tardiness;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteException;
+import android.net.Uri;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -100,5 +108,32 @@ public class Helper {
             editor.putString(e.id, e.getCSVEntry());
         }
         editor.commit();
+    }
+
+    private void exportTheData() throws IOException
+    {
+        File myFile;
+
+        try {
+
+            myFile = new File(Environment.getExternalStorageDirectory() +"/Export_Tardiness.csv");
+            myFile.createNewFile();
+            FileOutputStream fOut = new FileOutputStream(myFile);
+            OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
+            myOutWriter.append("Start time;End time;Elapse;Sports type");
+            myOutWriter.append("\n");
+
+            ArrayList<Event> myEvents = new ArrayList<>(events.values());
+            for (Event e: myEvents) {
+                        myOutWriter.append(e.name+","+e.date+","+e.startTime);
+                        myOutWriter.append("\n");
+            }
+
+            myOutWriter.close();
+            fOut.close();
+        } catch (SQLiteException se)
+        {
+            Log.e(getClass().getSimpleName(),"Could not create or Open the database");
+        }
     }
 }

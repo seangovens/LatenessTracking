@@ -19,7 +19,7 @@ public class EventFormActivity extends AppCompatActivity {
             itemNum = (int)b.get("itemNumber");
             eventType = (Helper.EVENT_TYPES)b.get("eventType");
         }
-        helper = Helper.getInstance(this);
+        helper = Helper.getInstance();
         Event event = helper.getAllEvents(eventType).get(itemNum);
         TextView title = (TextView) findViewById(R.id.title);
         title.setText(event.name);

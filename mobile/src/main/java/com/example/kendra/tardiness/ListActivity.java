@@ -45,11 +45,18 @@ import com.google.api.client.util.ExponentialBackOff;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Events;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.*;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+
+import static android.support.v4.content.FileProvider.getUriForFile;
+import static java.security.AccessController.getContext;
 
 public class ListActivity extends AppCompatActivity {
 
@@ -63,6 +70,7 @@ public class ListActivity extends AppCompatActivity {
     Helper helper;
     TabLayout tabLayout;
     Helper.EVENT_TYPES eventType;
+    Button sendEmailButton;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
@@ -76,7 +84,8 @@ public class ListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scrolling);
-        helper = Helper.getInstance(this);
+        Helper.context = this;
+        helper = Helper.getInstance();
 
         // Initialize credentials and service object.
         mCredential = GoogleAccountCredential.usingOAuth2(
@@ -96,6 +105,8 @@ public class ListActivity extends AppCompatActivity {
 
         eventType = Helper.EVENT_TYPES.COMPLETE;
 
+        sendEmailButton = findViewById(R.id.send_email);
+
         tabLayout = findViewById(R.id.tabs);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -103,14 +114,21 @@ public class ListActivity extends AppCompatActivity {
                 switch (tab.getPosition()) {
                     case 0:
                         eventType = Helper.EVENT_TYPES.COMPLETE;
+                        sendEmailButton.setVisibility(View.VISIBLE);
+                        mCallApiButton.setVisibility(View.GONE);
+
                         updateUI();
                         break;
                     case 1:
                         eventType = Helper.EVENT_TYPES.TODO;
+                        sendEmailButton.setVisibility(View.GONE);
+                        mCallApiButton.setVisibility(View.VISIBLE);
                         updateUI();
                         break;
                     case 2:
                         eventType = Helper.EVENT_TYPES.FUTURE;
+                        sendEmailButton.setVisibility(View.GONE);
+                        mCallApiButton.setVisibility(View.VISIBLE);
                         updateUI();
                         break;
 
@@ -464,20 +482,70 @@ public class ListActivity extends AppCompatActivity {
         }
     }
 
-    private void emailData() {
+    public void emailData(View v) {
+        File myFile;
+        File myPath;
+        FileOutputStream outputStream;
+        String filename = "Export_Tardiness";
+        StringBuilder data = new StringBuilder();
+        data.append("Name,Date,StartTime");
+        data.append("\n");
+
+        helper.updateSubLists();
+        ArrayList<Event> myEvents = new ArrayList<Event>(helper.events.values());
+        for (Event e: helper.toDo) {
+            data.append(e.name+","+e.date+","+e.startTime);
+            data.append("\n");
+        }
+
+        String fileContents = data.toString();
+        Log.d("Activity: ", "about to try file write.");
         try {
-            String filelocation= Environment.getExternalStorageDirectory() +"/Export_Tardiness.csv";
+            File test = getApplicationContext().getExternalFilesDir(null);
+            myPath = new File(getApplicationContext().getExternalFilesDir(null), "exports");
+            if (!myPath.exists()) {
+                myPath.mkdir();
+            }
+            myFile = new File(myPath, filename);
+            myFile.createNewFile();
+
+            outputStream = new FileOutputStream(myFile);
+            PrintWriter pw = new PrintWriter(outputStream);
+            pw.println(fileContents);
+            pw.flush();
+            pw.close();
+            outputStream.close();
+            //outputStream.write(fileContents.getBytes());
+            //outputStream.flush();
+            //outputStream.close();
+
+            Uri contentUri = getUriForFile(getApplicationContext(), "com.example.kendra.tardiness.fileprovider", myFile);
+
+
+
+            getApplicationContext().grantUriPermission("com.google.android.gm",
+                    contentUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+
+            //helper.exportTheData();
+            //String filelocation= this.getExternalFilesDir(null)+"/"+filename;
             Intent intent = new Intent(Intent.ACTION_SENDTO);
             intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_SUBJECT, "");
-            intent.putExtra(Intent.EXTRA_STREAM, Uri.parse( "file://"+filelocation));
+            //intent.putExtra(Intent.ACTION_SEND, contentUri);
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Data from Today");
+            intent.putExtra(Intent.EXTRA_STREAM, contentUri);
             intent.putExtra(Intent.EXTRA_TEXT, "Data from today");
-            intent.setData(Uri.parse("mailto:"));
+            intent.setData(Uri.parse("mailto:kawannam@ucalgary.ca"));
+            //intent.setData(contentUri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-            this.startActivity(intent);
+            Log.d("Activity: ", "about to finish file routine.");
+            //this.startActivity(intent);
+            this.startActivityForResult(intent, 1);
             this.finish();
         } catch(Exception e)  {
+            Log.d("File error: ", "error occurred during file creation.");
             System.out.println("is exception raises during sending mail"+e);
         }
     }

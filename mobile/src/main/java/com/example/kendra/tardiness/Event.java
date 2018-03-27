@@ -34,7 +34,7 @@ public class Event implements Parcelable{
     public String id;
     public String tippingPoint;
     public boolean complete;
-    DateFormat formatDate = new SimpleDateFormat("yyyy-MM-ddHH:mm:ss.SSSSX", Locale.ENGLISH);
+    DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSZ", Locale.ENGLISH);
     DateFormat dateToString = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
     DateFormat timeToString = new SimpleDateFormat("hh:mm a");
 
@@ -71,9 +71,7 @@ public class Event implements Parcelable{
     }
 
     public Event(String data){
-        id = Long.toString(System.currentTimeMillis());
-        title = data;
-        complete = false;
+        this(Long.toString(System.currentTimeMillis()), data);
     }
 
     public Event(String id, String data){
@@ -84,9 +82,9 @@ public class Event implements Parcelable{
         name = input[0].trim();
 
         StringBuilder builder = new StringBuilder(input[1]);
-        builder.deleteCharAt(10); //Remove T
+        //builder.deleteCharAt(10); //Remove T
         builder.deleteCharAt(builder.length() - 1);
-        builder.deleteCharAt(0); //Removing () around datetime
+        //builder.deleteCharAt(0); //Removing () around datetime
         try {
             date = formatDate.parse(builder.toString());
             startTime = formatDate.parse(builder.toString());

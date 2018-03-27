@@ -37,7 +37,9 @@ public class Helper {
 
     private static Helper helper;
 
-    private Helper(Context context) {
+    public static Context context;
+
+    private Helper() {
         events = new HashMap<String, Event>();
         toDo = new ArrayList<Event>();
         complete = new ArrayList<Event>();
@@ -71,9 +73,12 @@ public class Helper {
         }
     }
 
-    public static Helper getInstance(Context c) {
+    public static Helper getInstance() {
+        if (context == null) {
+            return null;
+        }
         if (helper == null) {
-            helper = new Helper(c);
+            helper = new Helper();
         }
         return helper;
     }
@@ -110,17 +115,17 @@ public class Helper {
         editor.commit();
     }
 
-    private void exportTheData() throws IOException
+    public void exportTheData() throws IOException
     {
         File myFile;
 
         try {
-
             myFile = new File(Environment.getExternalStorageDirectory() +"/Export_Tardiness.csv");
+            myFile.mkdir();
             myFile.createNewFile();
             FileOutputStream fOut = new FileOutputStream(myFile);
             OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
-            myOutWriter.append("Start time;End time;Elapse;Sports type");
+            myOutWriter.append("Name,Date,StartTime");
             myOutWriter.append("\n");
 
             ArrayList<Event> myEvents = new ArrayList<>(events.values());

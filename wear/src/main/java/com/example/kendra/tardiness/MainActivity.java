@@ -68,7 +68,7 @@ public class MainActivity extends Activity
         if (mGoogleApiClient == null)
             return;
         send(1);
-        /*final PendingResult<NodeApi.GetConnectedNodesResult> nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient);
+        final PendingResult<NodeApi.GetConnectedNodesResult> nodes = Wearable.NodeApi.getConnectedNodes(mGoogleApiClient);
         nodes.setResultCallback(new ResultCallback<NodeApi.GetConnectedNodesResult>() {
             @Override
             public void onResult(NodeApi.GetConnectedNodesResult result) {
@@ -80,7 +80,7 @@ public class MainActivity extends Activity
                     }
                 }
             }
-        });*/
+        });
     }
     protected void realizeClick(View view) {
         realizeButton.setBackgroundColor(Color.RED);

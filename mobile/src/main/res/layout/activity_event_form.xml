@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_event_form"
     android:layout_width="match_parent"
@@ -9,111 +10,108 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.kendra.tardiness.EventFormActivity">
+
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:weightSum="1">
 
-        <ScrollView
+        <EditText
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="3.29">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:inputType="textPersonName"
+            android:layout_height="0dp"
+            android:layout_weight="0.15"
+            android:inputType="textPersonName"
                 android:text="Title"
                 android:ems="10"
+                android:layout_gravity="center"
                 android:id="@+id/title" />
 
-            <EditText
+        <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:inputType="date"
                 android:ems="10"
                 android:id="@+id/date"
+                android:layout_weight="0.15"
                 android:text="Date" />
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:inputType="time"
                 android:ems="10"
                 android:id="@+id/start_time"
-                android:text="Start Time" />
+                android:text="Start Time"
+                android:layout_weight="0.15"/>
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:inputType="time"
                 android:ems="10"
                 android:id="@+id/switch_time"
-                android:text="Switch Task Time" />
+                android:text="Task Switch Time"
+                android:layout_weight="0.1"/>
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="time"
-                android:ems="10"
-                android:id="@+id/realize_time"
-                android:text="Realized Tardiness Time" />
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:inputType="time"
+                    android:ems="10"
+                    android:id="@+id/temp"
+                    android:text="Arrival Time"
+                    android:layout_weight="0.1"/>
 
-            <AutoCompleteTextView
-                android:text="Before Hand Activity"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/previous_activity" />
-
-            <AutoCompleteTextView
-                android:text="Activity Category"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/activity_category" />
 
             <TextView
                 android:text="Importance:"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:id="@+id/importance_label"
-                android:layout_weight="0.08"
+                android:layout_weight="0.1"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:textSize="18sp" />
 
-            <RatingBar
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/importance" />
+                <RatingBar
+                    android:id="@+id/importance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="0.1"
                 android:inputType="number"
                 android:ems="10"
                 android:id="@+id/peopleWaiting"
                 android:text="# of People Who Waited" />
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:ems="10"
-                android:id="@+id/why"
-                android:text="Reason you Late" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.15"
+                    android:orientation="horizontal">
 
-            <EditText
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:ems="10"
-                android:id="@+id/consequences"
-                android:text="Consequences" />
+                    <Button
+                        android:id="@+id/save"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.50"
+                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:textColor="@color/colorAccent"
+                        android:text="Save" />
+
+                    <Button
+                        android:id="@+id/delete"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.50"
+                        android:backgroundTint="@color/colorPrimaryDark"
+                        android:textColor="@color/colorAccent"
+                        android:text="Delete" />
+
+
+                </LinearLayout>
             </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
 </RelativeLayout>

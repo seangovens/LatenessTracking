@@ -73,7 +73,7 @@ public class MessageReceiverService extends Service implements DataClient.OnData
         CapabilityClient.OnCapabilityChangedListener
 {
     private static final String TAG = "SensorDashboard/MessageReceiverService";
-    private final IBinder mBinder = new LocalBinder();
+    //private final IBinder mBinder = new LocalBinder();
 
     @Override
     public void onCapabilityChanged(@NonNull CapabilityInfo capabilityInfo) {
@@ -96,14 +96,15 @@ public class MessageReceiverService extends Service implements DataClient.OnData
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return super.onBind(intent);
+        //return super.onBind(intent);
+        return null;
     }
 
-    public class LocalBinder extends Binder {
+    /*public class LocalBinder extends Binder {
         onMessageReceived getService() {
             // Return this instance of LocalService so clients can call public methods
             return onMessageReceived.this;
         }
-    }
+    }*/
 
 }

@@ -17,7 +17,6 @@ public class EventFormActivity extends AppCompatActivity {
         Bundle b = this.getIntent().getExtras();
         if (b != null) {
             itemNum = (int)b.get("itemNumber");
-            eventType = (Helper.EVENT_TYPES)b.get("eventType");
         }
         helper = Helper.getInstance();
         Event event = helper.getAllEvents(eventType).get(itemNum);

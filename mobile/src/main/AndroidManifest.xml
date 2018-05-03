@@ -17,8 +17,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".ListActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:label="@string/app_name" />
         <activity android:name=".EventFormActivity"></activity>
 
         <provider

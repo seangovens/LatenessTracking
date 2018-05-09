@@ -20,7 +20,6 @@ public class Event implements Parcelable{
     public String title;
     public String name;
     public String classification;
-    public String previousActivity;
     public int trasportMethod;
     public int waitingPeople;
     public String why;
@@ -47,7 +46,6 @@ public class Event implements Parcelable{
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(title);
         dest.writeString(classification);
-        dest.writeString(previousActivity);
         dest.writeInt(trasportMethod);
         dest.writeInt(waitingPeople);
         dest.writeString(why);

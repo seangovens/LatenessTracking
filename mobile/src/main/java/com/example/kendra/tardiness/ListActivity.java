@@ -70,7 +70,7 @@ public class ListActivity extends AppCompatActivity {
     Helper helper;
     TabLayout tabLayout;
     Helper.EVENT_TYPES eventType;
-    Button sendEmailButton;
+    FloatingActionButton sendEmailButton;
 
     static final int REQUEST_ACCOUNT_PICKER = 1000;
     static final int REQUEST_AUTHORIZATION = 1001;
@@ -106,6 +106,12 @@ public class ListActivity extends AppCompatActivity {
         eventType = Helper.EVENT_TYPES.COMPLETE;
 
         sendEmailButton = findViewById(R.id.send_email);
+        sendEmailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                emailData(v);
+            }
+        });
 
         tabLayout = findViewById(R.id.tabs);
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -166,6 +172,9 @@ public class ListActivity extends AppCompatActivity {
     }
 
     public void displayEventForm(int position) {
+        if (helper.events.isEmpty()) {
+            return;
+        }
         Intent intent = new Intent(this, EventFormActivity.class);
         int selected = (int) listView.getItemIdAtPosition(position);
         intent.putExtra("itemNumber", selected );
@@ -487,7 +496,8 @@ public class ListActivity extends AppCompatActivity {
         File myPath;
         FileOutputStream outputStream;
         String filename = "Export_Tardiness";
-        StringBuilder data = new StringBuilder();
+
+        /*StringBuilder data = new StringBuilder();
         data.append("Name,Date,StartTime");
         data.append("\n");
 
@@ -498,7 +508,9 @@ public class ListActivity extends AppCompatActivity {
             data.append("\n");
         }
 
-        String fileContents = data.toString();
+        String fileContents = data.toString();*/
+
+        String fileContents = helper.exportTheData();
         Log.d("Activity: ", "about to try file write.");
         try {
             File test = getApplicationContext().getExternalFilesDir(null);
@@ -532,9 +544,9 @@ public class ListActivity extends AppCompatActivity {
             Intent intent = new Intent(Intent.ACTION_SENDTO);
             intent.setType("text/plain");
             //intent.putExtra(Intent.ACTION_SEND, contentUri);
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Data from Today");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Tardiness Data" );
             intent.putExtra(Intent.EXTRA_STREAM, contentUri);
-            intent.putExtra(Intent.EXTRA_TEXT, "Data from today");
+            intent.putExtra(Intent.EXTRA_TEXT, "Completed Data CSV");
             intent.setData(Uri.parse("mailto:kawannam@ucalgary.ca"));
             //intent.setData(contentUri);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -543,7 +555,8 @@ public class ListActivity extends AppCompatActivity {
             Log.d("Activity: ", "about to finish file routine.");
             //this.startActivity(intent);
             this.startActivityForResult(intent, 1);
-            this.finish();
+            helper.updateSubLists();
+            //this.finish();
         } catch(Exception e)  {
             Log.d("File error: ", "error occurred during file creation.");
             System.out.println("is exception raises during sending mail"+e);

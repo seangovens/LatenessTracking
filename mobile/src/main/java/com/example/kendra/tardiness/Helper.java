@@ -14,6 +14,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -67,6 +68,8 @@ public class Helper {
         //if ( time is in the future)
             if (e.complete) {
                 complete.add(e);
+            } else if (e.date.compareTo( Calendar.getInstance().getTime()) > 0) {
+                future.add(e);
             } else {
                 toDo.add(e);
             }
@@ -101,6 +104,8 @@ public class Helper {
 
     public void removeEvent(Event e) {
         events.remove(e.id);
+        saveEvents(context);
+        updateSubLists();
     }
 
     public void saveEvents(Context context) {
@@ -115,30 +120,26 @@ public class Helper {
         editor.commit();
     }
 
-    public void exportTheData() throws IOException
+    public String exportTheData()
     {
-        File myFile;
+        StringBuilder data = new StringBuilder();
+        data.append("Name,Date,StartTime");
+        data.append("\n");
 
-        try {
-            myFile = new File(Environment.getExternalStorageDirectory() +"/Export_Tardiness.csv");
-            myFile.mkdir();
-            myFile.createNewFile();
-            FileOutputStream fOut = new FileOutputStream(myFile);
-            OutputStreamWriter myOutWriter = new OutputStreamWriter(fOut);
-            myOutWriter.append("Name,Date,StartTime");
-            myOutWriter.append("\n");
-
-            ArrayList<Event> myEvents = new ArrayList<>(events.values());
-            for (Event e: myEvents) {
-                        myOutWriter.append(e.name+","+e.date+","+e.startTime);
-                        myOutWriter.append("\n");
-            }
-
-            myOutWriter.close();
-            fOut.close();
-        } catch (SQLiteException se)
-        {
-            Log.e(getClass().getSimpleName(),"Could not create or Open the database");
+        helper.updateSubLists();
+        ArrayList<Event> myEvents = new ArrayList<Event>(events.values());
+        for (Event e: helper.complete) {
+            data.append(e.name+","+e.date+","+e.startTime);
+            data.append("\n");
         }
+        for (Event e : complete) {
+            events.remove(e.id);
+        }
+        saveEvents(context);
+        updateSubLists();
+
+
+        String fileContents = data.toString();
+        return fileContents;
     }
 }

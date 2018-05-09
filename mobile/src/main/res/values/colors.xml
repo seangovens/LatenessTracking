@@ -9,4 +9,6 @@
     <color name="purple">#74276D</color>
     <color name="darkPurple">#570E51</color>
     <color name="blackPurple">#3A0035</color>
+    <color name="darkGray">#6f6f6c</color>
+    <color name="darkerGray">#353533</color>
 </resources>

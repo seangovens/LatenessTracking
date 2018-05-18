@@ -50,6 +50,7 @@ public class Helper {
         complete = new ArrayList<Event>();
         future = new ArrayList<Event>();
         completedSet = new HashSet<>();
+        deletedSet = new HashSet<>();
 
 
         /*SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);

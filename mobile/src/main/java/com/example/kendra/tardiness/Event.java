@@ -33,9 +33,10 @@ public class Event implements Parcelable{
     public String id;
     public String tippingPoint;
     public boolean complete;
-    DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSZ", Locale.ENGLISH);
-    DateFormat dateToString = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
-    DateFormat timeToString = new SimpleDateFormat("hh:mm a");
+
+    public static DateFormat formatDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSZ", Locale.ENGLISH);
+    public static DateFormat dateToString = new SimpleDateFormat("MMM dd, yyyy", Locale.ENGLISH);
+    public static DateFormat timeToString = new SimpleDateFormat("hh:mm a");
 
     @Override
     public int describeContents() {

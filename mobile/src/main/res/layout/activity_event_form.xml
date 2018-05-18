@@ -59,6 +59,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:inputType="date"
+                    android:focusable="false"
+                    android:onClick="dateEntry"
                     android:ems="10"
                     android:id="@+id/date"
                     android:layout_weight="0.7" />
@@ -110,6 +112,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:inputType="time"
+                    android:focusable="false"
+                    android:onClick="timeEntry"
                     android:ems="10"
                     android:id="@+id/start_time"
                     android:layout_weight="0.70"/>
@@ -136,6 +140,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:inputType="time"
+                android:focusable="false"
+                android:onClick="timeEntry"
                 android:ems="10"
                 android:id="@+id/switch_time"
                 android:layout_weight="0.7"/>
@@ -162,6 +168,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:inputType="time"
+                android:focusable="false"
+                android:onClick="timeEntry"
                 android:ems="10"
                 android:id="@+id/arrival_time"
                 android:layout_weight="0.7"/>

@@ -16,6 +16,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -29,6 +30,8 @@ public class Helper {
     public ArrayList<Event> toDo;
     public ArrayList<Event> complete;
     public ArrayList<Event> future;
+
+    private HashSet<String> completedSet;
 
     public static enum EVENT_TYPES {
         COMPLETE,
@@ -45,6 +48,7 @@ public class Helper {
         toDo = new ArrayList<Event>();
         complete = new ArrayList<Event>();
         future = new ArrayList<Event>();
+        completedSet = new HashSet<>();
 
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -61,13 +65,17 @@ public class Helper {
 
     public void updateSubLists() {
         ArrayList<Event> myEvents = new ArrayList<>(events.values());
-        complete.clear();
+        //complete.clear();
         toDo.clear();
         future.clear();
         for(Event e: myEvents) {
         //if ( time is in the future)
+            if (completedSet.contains(e.title))
+                continue;
+
             if (e.complete) {
                 complete.add(e);
+                completedSet.add(e.title);
             } else if (e.date.compareTo( Calendar.getInstance().getTime()) > 0) {
                 future.add(e);
             } else {
@@ -87,7 +95,8 @@ public class Helper {
     }
 
     public  String addEvent(Event event) {
-        events.put(event.title, event);
+        if (!events.containsKey(event.title))
+            events.put(event.title, event);
         return event.id;
     }
 

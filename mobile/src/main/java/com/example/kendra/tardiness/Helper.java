@@ -32,6 +32,7 @@ public class Helper {
     public ArrayList<Event> future;
 
     private HashSet<String> completedSet;
+    private HashSet<String> deletedSet;
 
     public static enum EVENT_TYPES {
         COMPLETE,
@@ -51,7 +52,7 @@ public class Helper {
         completedSet = new HashSet<>();
 
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        /*SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         Map<String, ?> key = sharedPreferences.getAll();
         for (Map.Entry<String, ?> entry : key.entrySet()) {
             String savedData = (String) entry.getValue();
@@ -60,7 +61,7 @@ public class Helper {
                 events.put(event.title, event);
             }
         }
-        updateSubLists();
+        updateSubLists();*/
     }
 
     public void updateSubLists() {
@@ -70,7 +71,7 @@ public class Helper {
         future.clear();
         for(Event e: myEvents) {
         //if ( time is in the future)
-            if (completedSet.contains(e.title))
+            if (completedSet.contains(e.title) || deletedSet.contains(e.title))
                 continue;
 
             if (e.complete) {
@@ -112,7 +113,8 @@ public class Helper {
     }
 
     public void removeEvent(Event e) {
-        events.remove(e.id);
+        events.remove(e.title);
+        deletedSet.add(e.title);
         saveEvents(context);
         updateSubLists();
     }

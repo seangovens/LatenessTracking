@@ -76,6 +76,7 @@ public class ListActivity extends AppCompatActivity {
     static final int REQUEST_AUTHORIZATION = 1001;
     static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
+    static final int RESULT_EVENT_FORM = 1004;
 
     private static final String PREF_ACCOUNT_NAME = "accountName";
     private static final String[] SCOPES = { CalendarScopes.CALENDAR_READONLY };
@@ -179,7 +180,7 @@ public class ListActivity extends AppCompatActivity {
         int selected = (int) listView.getItemIdAtPosition(position);
         intent.putExtra("itemNumber", selected );
         intent.putExtra("eventType", eventType);
-        this.startActivity(intent);
+        this.startActivityForResult(intent, RESULT_EVENT_FORM);
     }
 
     public void updateUI(){
@@ -315,6 +316,9 @@ public class ListActivity extends AppCompatActivity {
                     getResultsFromApi();
                 }
                 break;
+            case RESULT_EVENT_FORM:
+                helper.updateSubLists();
+                updateUI();
         }
     }
 

@@ -43,6 +43,7 @@ public class EventFormActivity extends AppCompatActivity {
             public void onClick(View v) {
                 event.title = title.getText().toString();
                 event.complete = true;
+                finish();
             }
         });
 
@@ -51,6 +52,7 @@ public class EventFormActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 helper.removeEvent(event);
+                finish();
             }
         });
     }
